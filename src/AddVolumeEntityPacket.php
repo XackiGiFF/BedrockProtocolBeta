@@ -77,22 +77,30 @@ class AddVolumeEntityPacket extends DataPacket implements ClientboundPacket{
 	protected function decodePayload(PacketSerializer $in) : void{
 		$this->entityNetId = $in->getUnsignedVarInt();
 		$this->data = new CacheableNbt($in->getNbtCompoundRoot());
-		$this->jsonIdentifier = $in->getString();
-		$this->instanceName = $in->getString();
-		$this->minBound = $in->getBlockPosition();
-		$this->maxBound = $in->getBlockPosition();
-		$this->dimension = $in->getVarInt();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_486){
+			$this->jsonIdentifier = $in->getString();
+			$this->instanceName = $in->getString();
+			if($in->getProtocol() >= ProtocolInfo::PROTOCOL_503){
+				$this->minBound = $in->getBlockPosition();
+				$this->maxBound = $in->getBlockPosition();
+				$this->dimension = $in->getVarInt();
+			}
+		}
 		$this->engineVersion = $in->getString();
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
 		$out->putUnsignedVarInt($this->entityNetId);
 		$out->put($this->data->getEncodedNbt());
-		$out->putString($this->jsonIdentifier);
-		$out->putString($this->instanceName);
-		$out->putBlockPosition($this->minBound);
-		$out->putBlockPosition($this->maxBound);
-		$out->putVarInt($this->dimension);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_486){
+			$out->putString($this->jsonIdentifier);
+			$out->putString($this->instanceName);
+			if($out->getProtocol() >= ProtocolInfo::PROTOCOL_503){
+				$out->putBlockPosition($this->minBound);
+				$out->putBlockPosition($this->maxBound);
+				$out->putVarInt($this->dimension);
+			}
+		}
 		$out->putString($this->engineVersion);
 	}
 

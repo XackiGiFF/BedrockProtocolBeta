@@ -37,6 +37,16 @@ final class ProtocolInfo{
 	public const MINECRAFT_VERSION = 'v1.18.30';
 	/** Version number sent to clients in ping responses. */
 	public const MINECRAFT_VERSION_NETWORK = '1.18.30';
+	
+	public const PROTOCOL_503 = 503; // v1.18.30
+	public const PROTOCOL_486 = 486; // v1.18.10
+	public const PROTOCOL_475 = 475; // v1.18.0
+
+	public const COMPATIBLE_PROTOCOL = [
+		self::PROTOCOL_503,
+		self::PROTOCOL_486,
+		self::PROTOCOL_475,
+	];
 
 	public const LOGIN_PACKET = 0x01;
 	public const PLAY_STATUS_PACKET = 0x02;

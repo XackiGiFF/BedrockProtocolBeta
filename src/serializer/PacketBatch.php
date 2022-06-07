@@ -53,10 +53,12 @@ class PacketBatch{
 	 *
 	 * @return PacketBatch
 	 */
-	public static function fromPackets(PacketSerializerContext $context, Packet ...$packets) : self{
+	public static function fromPackets(int $protocol, PacketSerializerContext $context, Packet ...$packets) : self{
 		$serializer = PacketSerializer::encoder($context);
+		$serializer->setProtocol($protocol);
 		foreach($packets as $packet){
 			$subSerializer = PacketSerializer::encoder($context);
+			$subSerializer->setProtocol($protocol);
 			$packet->encode($subSerializer);
 			$serializer->putString($subSerializer->getBuffer());
 		}
