@@ -284,6 +284,7 @@ class PacketSerializer extends BinaryStream{
 
 		$blockRuntimeId = $this->getVarInt();
 		$extraData = self::decoder($this->getString(), 0, $this->context);
+		$extraData->setProtocol($this->protocol);
 		return (static function() use ($extraData, $id, $meta, $count, $blockRuntimeId) : ItemStack{
 			$nbtLen = $extraData->getLShort();
 
@@ -349,6 +350,7 @@ class PacketSerializer extends BinaryStream{
 		$context = $this->context;
 		$this->putString((static function() use ($item, $context) : string{
 			$extraData = PacketSerializer::encoder($context);
+			$extraData->setProtocol($this->protocol);
 
 			$nbt = $item->getNbt();
 			if($nbt !== null){
