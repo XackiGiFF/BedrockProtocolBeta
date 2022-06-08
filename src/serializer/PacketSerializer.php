@@ -348,9 +348,10 @@ class PacketSerializer extends BinaryStream{
 
 		$this->putVarInt($item->getBlockRuntimeId());
 		$context = $this->context;
-		$this->putString((static function() use ($item, $context) : string{
+		$protocol = $this->protocol;
+		$this->putString((static function() use ($item, $context, $protocol) : string{
 			$extraData = PacketSerializer::encoder($context);
-			$extraData->setProtocol($this->protocol);
+			$extraData->setProtocol($protocol);
 
 			$nbt = $item->getNbt();
 			if($nbt !== null){
