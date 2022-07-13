@@ -41,7 +41,9 @@ class DataPacketTest extends TestCase{
 		$pk->encode($serializer);
 
 		$pk2 = new TestPacket();
-		$pk2->decode(PacketSerializer::decoder($serializer->getBuffer(), 0, $context));
+		$decoder = PacketSerializer::decoder($serializer->getBuffer(), 0, $context);
+		$decoder->setProtocol(ProtocolInfo::CURRENT_PROTOCOL);
+		$pk2->decode($decoder);
 		self::assertSame($pk2->senderSubId, 3);
 		self::assertSame($pk2->recipientSubId, 2);
 	}
