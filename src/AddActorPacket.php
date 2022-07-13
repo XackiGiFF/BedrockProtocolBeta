@@ -90,7 +90,9 @@ class AddActorPacket extends DataPacket implements ClientboundPacket{
 		$this->pitch = $in->getLFloat();
 		$this->yaw = $in->getLFloat();
 		$this->headYaw = $in->getLFloat();
-		$this->bodyYaw = $in->getLFloat();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_534){
+			$this->bodyYaw = $in->getLFloat();
+		}
 
 		$attrCount = $in->getUnsignedVarInt();
 		for($i = 0; $i < $attrCount; ++$i){
@@ -117,7 +119,9 @@ class AddActorPacket extends DataPacket implements ClientboundPacket{
 		$out->putLFloat($this->pitch);
 		$out->putLFloat($this->yaw);
 		$out->putLFloat($this->headYaw);
-		$out->putLFloat($this->bodyYaw);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_534){
+			$out->putLFloat($this->bodyYaw);
+		}
 
 		$out->putUnsignedVarInt(count($this->attributes));
 		foreach($this->attributes as $attribute){

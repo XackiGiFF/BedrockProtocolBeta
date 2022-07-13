@@ -60,6 +60,16 @@ class UpdateAbilitiesPacket extends DataPacket implements ClientboundPacket{
 	public function getAbilityLayers() : array{ return $this->abilityLayers; }
 
 	protected function decodePayload(PacketSerializer $in) : void{
+		if($in->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$in->getUnsignedVarInt(); // flags
+			$this->commandPermission = $in->getUnsignedVarInt();
+			$in->getUnsignedVarInt(); // flags 2
+			$this->playerPermission = $in->getUnsignedVarInt();
+			$in->getUnsignedVarInt(); // custom flags
+			$this->targetActorUniqueId = $in->getLLong();
+			$this->abilityLayers = [];
+			return;
+		}
 		$this->targetActorUniqueId = $in->getLLong(); //WHY IS THIS NON-STANDARD?
 		$this->playerPermission = $in->getByte();
 		$this->commandPermission = $in->getByte();
@@ -71,6 +81,15 @@ class UpdateAbilitiesPacket extends DataPacket implements ClientboundPacket{
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
+		if($out->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$out->putUnsignedVarInt(0); // flags
+			$out->putUnsignedVarInt($this->commandPermission);
+			$out->putUnsignedVarInt(0); // flags2
+			$out->putUnsignedVarInt($this->playerPermission);
+			$out->putUnsignedVarInt(0); // custom flags
+			$out->putLLong($this->targetActorUniqueId);
+			return;
+		}
 		$out->putLLong($this->targetActorUniqueId);
 		$out->putByte($this->playerPermission);
 		$out->putByte($this->commandPermission);
