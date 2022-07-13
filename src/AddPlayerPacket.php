@@ -97,6 +97,9 @@ class AddPlayerPacket extends DataPacket implements ClientboundPacket{
 	protected function decodePayload(PacketSerializer $in) : void{
 		$this->uuid = $in->getUUID();
 		$this->username = $in->getString();
+		if($in->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$in->getActorUniqueId(); // actor unique id
+		}
 		$this->actorRuntimeId = $in->getActorRuntimeId();
 		$this->platformChatId = $in->getString();
 		$this->position = $in->getVector3();
@@ -125,6 +128,9 @@ class AddPlayerPacket extends DataPacket implements ClientboundPacket{
 	protected function encodePayload(PacketSerializer $out) : void{
 		$out->putUUID($this->uuid);
 		$out->putString($this->username);
+		if($out->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$out->putActorUniqueId($this->actorRuntimeId); // actor unique id
+		}
 		$out->putActorRuntimeId($this->actorRuntimeId);
 		$out->putString($this->platformChatId);
 		$out->putVector3($this->position);
