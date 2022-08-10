@@ -93,4 +93,8 @@ final class UIInventorySlotOffset{
 		49 => 8,
 	];
 	public const CREATED_ITEM_OUTPUT = 50;
+	public const SMITHING_TABLE = [
+		51 => 0,
+		52 => 1,
+	];
 }

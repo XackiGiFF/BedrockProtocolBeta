@@ -25,6 +25,7 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\command\CommandOriginData;
 use pocketmine\network\mcpe\protocol\types\entity\Attribute;
+use pocketmine\network\mcpe\protocol\types\entity\AttributeModifier;
 use pocketmine\network\mcpe\protocol\types\entity\BlockPosMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\ByteMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\CompoundTagMetadataProperty;
@@ -482,7 +483,12 @@ class PacketSerializer extends BinaryStream{
 			$default = $this->getLFloat();
 			$id = $this->getString();
 
-			$list[] = new Attribute($id, $min, $max, $current, $default);
+			$modifiers = [];
+			for($j = 0, $modifierCount = $this->getUnsignedVarInt(); $j < $modifierCount; $j++){
+				$modifiers[] = AttributeModifier::read($this);
+			}
+
+			$list[] = new Attribute($id, $min, $max, $current, $default, $modifiers);
 		}
 
 		return $list;
@@ -499,6 +505,11 @@ class PacketSerializer extends BinaryStream{
 			$this->putLFloat($attribute->getCurrent());
 			$this->putLFloat($attribute->getDefault());
 			$this->putString($attribute->getId());
+
+			$this->putUnsignedVarInt(count($attribute->getModifiers()));
+			foreach($attribute->getModifiers() as $modifier){
+				$modifier->write($this);
+			}
 		}
 	}
 
@@ -806,5 +817,31 @@ class PacketSerializer extends BinaryStream{
 
 	public function writeGenericTypeNetworkId(int $id) : void{
 		$this->putVarInt($id);
+	}
+
+	/**
+	 * @phpstan-template T
+	 * @phpstan-param \Closure() : T $reader
+	 * @phpstan-return T|null
+	 */
+	public function readOptional(\Closure $reader) : mixed{
+		if($this->getBool()){
+			return $reader();
+		}
+		return null;
+	}
+
+	/**
+	 * @phpstan-template T
+	 * @phpstan-param T|null $value
+	 * @phpstan-param \Closure(T) : void $writer
+	 */
+	public function writeOptional(mixed $value, \Closure $writer) : void{
+		if($value !== null){
+			$this->putBool(true);
+			$writer($value);
+		}else{
+			$this->putBool(false);
+		}
 	}
 }

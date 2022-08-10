@@ -53,6 +53,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 	public bool $enableNewInventorySystem = false; //TODO
 	public string $serverSoftwareVersion;
 	public UuidInterface $worldTemplateId; //why is this here twice ??? mojang
+	public bool $enableClientSideChunkGeneration;
 
 	/**
 	 * @var BlockPaletteEntry[]
@@ -101,6 +102,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		bool $enableNewInventorySystem,
 		string $serverSoftwareVersion,
 		UuidInterface $worldTemplateId,
+		bool $enableClientSideChunkGeneration,
 		array $blockPalette,
 		int $blockPaletteChecksum,
 		array $itemTable,
@@ -125,6 +127,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		$result->enableNewInventorySystem = $enableNewInventorySystem;
 		$result->serverSoftwareVersion = $serverSoftwareVersion;
 		$result->worldTemplateId = $worldTemplateId;
+		$result->enableClientSideChunkGeneration = $enableClientSideChunkGeneration;
 		$result->blockPalette = $blockPalette;
 		$result->blockPaletteChecksum = $blockPaletteChecksum;
 		$result->itemTable = $itemTable;
@@ -178,6 +181,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_527){
 			$this->worldTemplateId = $in->getUUID();
 		}
+		$this->enableClientSideChunkGeneration = $in->getBool();
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
@@ -224,6 +228,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_527){
 			$out->putUUID($this->worldTemplateId);
 		}
+		$out->putBool($this->enableClientSideChunkGeneration);
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

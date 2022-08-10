@@ -12,11 +12,18 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\recipe;
+namespace pocketmine\network\mcpe\protocol\types\entity;
 
-final class CraftingRecipeBlockName{
-	public const CARTOGRAPHY_TABLE = "cartography_table";
-	public const CRAFTING_TABLE = "crafting_table";
-	public const STONECUTTER = "stonecutter";
-	public const SMITHING_TABLE = "smithing_table";
+/**
+ * Affects which parameter of the target attribute is modified.
+ */
+final class AttributeModifierTargetOperand{
+
+	private function __construct(){
+		//NOOP
+	}
+
+	public const MIN = 0;
+	public const MAX = 1;
+	public const CURRENT = 2;
 }
