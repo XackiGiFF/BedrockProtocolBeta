@@ -129,16 +129,20 @@ final class LevelSettings{
 		$this->isFromWorldTemplate = $in->getBool();
 		$this->isWorldTemplateOptionLocked = $in->getBool();
 		$this->onlySpawnV1Villagers = $in->getBool();
-		$this->disablePersona = $in->getBool();
-		$this->disableCustomSkins = $in->getBool();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$this->disablePersona = $in->getBool();
+			$this->disableCustomSkins = $in->getBool();
+		}
 		$this->vanillaVersion = $in->getString();
 		$this->limitedWorldWidth = $in->getLInt();
 		$this->limitedWorldLength = $in->getLInt();
 		$this->isNewNether = $in->getBool();
 		$this->eduSharedUriResource = EducationUriResource::read($in);
-		$this->experimentalGameplayOverride = $in->readOptional(\Closure::fromCallable([$in, 'getBool']));
-		$this->chatRestrictionLevel = $in->getByte();
-		$this->disablePlayerInteractions = $in->getBool();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$this->experimentalGameplayOverride = $in->readOptional(\Closure::fromCallable([$in, 'getBool']));
+			$this->chatRestrictionLevel = $in->getByte();
+			$this->disablePlayerInteractions = $in->getBool();
+		}
 	}
 
 	public function write(PacketSerializer $out) : void{
@@ -182,15 +186,19 @@ final class LevelSettings{
 		$out->putBool($this->isFromWorldTemplate);
 		$out->putBool($this->isWorldTemplateOptionLocked);
 		$out->putBool($this->onlySpawnV1Villagers);
-		$out->putBool($this->disablePersona);
-		$out->putBool($this->disableCustomSkins);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$out->putBool($this->disablePersona);
+			$out->putBool($this->disableCustomSkins);
+		}
 		$out->putString($this->vanillaVersion);
 		$out->putLInt($this->limitedWorldWidth);
 		$out->putLInt($this->limitedWorldLength);
 		$out->putBool($this->isNewNether);
 		($this->eduSharedUriResource ?? new EducationUriResource("", ""))->write($out);
-		$out->writeOptional($this->experimentalGameplayOverride, \Closure::fromCallable([$out, 'putBool']));
-		$out->putByte($this->chatRestrictionLevel);
-		$out->putBool($this->disablePlayerInteractions);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$out->writeOptional($this->experimentalGameplayOverride, \Closure::fromCallable([$out, 'putBool']));
+			$out->putByte($this->chatRestrictionLevel);
+			$out->putBool($this->disablePlayerInteractions);
+		}
 	}
 }

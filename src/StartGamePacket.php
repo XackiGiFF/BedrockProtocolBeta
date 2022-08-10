@@ -181,7 +181,9 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_527){
 			$this->worldTemplateId = $in->getUUID();
 		}
-		$this->enableClientSideChunkGeneration = $in->getBool();
+		if($in->getProtocol() >= Protocolinfo::PROTOCOL_544){
+			$this->enableClientSideChunkGeneration = $in->getBool();
+		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
@@ -228,7 +230,9 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_527){
 			$out->putUUID($this->worldTemplateId);
 		}
-		$out->putBool($this->enableClientSideChunkGeneration);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544) {
+			$out->putBool($this->enableClientSideChunkGeneration);
+		}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

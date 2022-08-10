@@ -39,18 +39,22 @@ class MapInfoRequestPacket extends DataPacket implements ServerboundPacket{
 	protected function decodePayload(PacketSerializer $in) : void{
 		$this->mapId = $in->getActorUniqueId();
 
-		$this->clientPixels = [];
-		for($i = 0, $count = $in->getLInt(); $i < $count; $i++){
-			$this->clientPixels[] = MapInfoRequestPacketClientPixel::read($in);
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$this->clientPixels = [];
+			for($i = 0, $count = $in->getLInt(); $i < $count; $i++){
+				$this->clientPixels[] = MapInfoRequestPacketClientPixel::read($in);
+			}
 		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
 		$out->putActorUniqueId($this->mapId);
 
-		$out->putLInt(count($this->clientPixels));
-		foreach($this->clientPixels as $pixel){
-			$pixel->write($out);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544){
+			$out->putLInt(count($this->clientPixels));
+			foreach($this->clientPixels as $pixel){
+				$pixel->write($out);
+			}
 		}
 	}
 
