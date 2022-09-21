@@ -66,6 +66,8 @@ interface PacketHandlerInterface{
 
 	public function handleLevelEvent(LevelEventPacket $packet) : bool;
 
+	public function handleAdventureSettings(AdventureSettingsPacket $packet);
+
 	public function handleBlockEvent(BlockEventPacket $packet) : bool;
 
 	public function handleActorEvent(ActorEventPacket $packet) : bool;

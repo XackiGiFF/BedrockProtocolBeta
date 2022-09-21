@@ -85,6 +85,7 @@ class PacketPool{
 		$this->registerPacket(new CraftingDataPacket());
 		$this->registerPacket(new CraftingEventPacket());
 		$this->registerPacket(new GuiDataPickItemPacket());
+		$this->registerPacket(new AdventureSettingsPacket());
 		$this->registerPacket(new BlockActorDataPacket());
 		$this->registerPacket(new PlayerInputPacket());
 		$this->registerPacket(new LevelChunkPacket());

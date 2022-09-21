@@ -388,15 +388,20 @@ class PacketSerializer extends BinaryStream{
 	}
 
 	public function getRecipeIngredient() : RecipeIngredient{
-		$descriptorType = $this->getByte();
-		$descriptor = match($descriptorType){
-			ItemDescriptorType::INT_ID_META => IntIdMetaItemDescriptor::read($this),
-			ItemDescriptorType::STRING_ID_META => StringIdMetaItemDescriptor::read($this),
-			ItemDescriptorType::TAG => TagItemDescriptor::read($this),
-			ItemDescriptorType::MOLANG => MolangItemDescriptor::read($this),
-			default => null
-		};
-		$count = $this->getVarInt();
+		if($this->getProtocol() >= ProtocolInfo::PROTOCOL_554){
+			$descriptorType = $this->getByte();
+			$descriptor = match($descriptorType){
+				ItemDescriptorType::INT_ID_META => IntIdMetaItemDescriptor::read($this),
+				ItemDescriptorType::STRING_ID_META => StringIdMetaItemDescriptor::read($this),
+				ItemDescriptorType::TAG => TagItemDescriptor::read($this),
+				ItemDescriptorType::MOLANG => MolangItemDescriptor::read($this),
+				default => null
+			};
+			$count = $this->getVarInt();
+		}else{
+			$descriptor = IntIdMetaItemDescriptor::read($this);
+			$count = $descriptor->getId() === 0 ? 0 : $this->getVarInt();
+		}
 
 		return new RecipeIngredient($descriptor, $count);
 	}
@@ -404,10 +409,19 @@ class PacketSerializer extends BinaryStream{
 	public function putRecipeIngredient(RecipeIngredient $ingredient) : void{
 		$type = $ingredient->getDescriptor();
 
-		$this->putByte($type?->getTypeId() ?? 0);
-		$type?->write($this);
+		if($this->getProtocol() >= ProtocolInfo::PROTOCOL_554){
+			$this->putByte($type?->getTypeId() ?? 0);
+			$type?->write($this);
 
-		$this->putVarInt($ingredient->getCount());
+			$this->putVarInt($ingredient->getCount());
+		}elseif($type instanceof IntIdMetaItemDescriptor){
+			$type->write($this);
+			if($type->getId() !== 0){
+				$this->putVarInt($ingredient->getCount());
+			}
+		}else{
+			$this->putVarInt(0);
+		}
 	}
 
 	/**
