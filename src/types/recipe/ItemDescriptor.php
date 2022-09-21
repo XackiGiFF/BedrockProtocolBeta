@@ -12,19 +12,15 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\entity;
+namespace pocketmine\network\mcpe\protocol\types\recipe;
 
-class EntityLink{
+use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 
-	public const TYPE_REMOVE = 0;
-	public const TYPE_RIDER = 1;
-	public const TYPE_PASSENGER = 2;
+/**
+ * Describes what items are accepted in a recipe input.
+ */
+interface ItemDescriptor{
+	public function getTypeId() : int;
 
-	public function __construct(
-		public int $fromActorUniqueId,
-		public int $toActorUniqueId,
-		public int $type,
-		public bool $immediate,
-		public bool $causedByRider
-	){}
+	public function write(PacketSerializer $out) : void;
 }

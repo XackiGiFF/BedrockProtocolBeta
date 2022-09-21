@@ -17,34 +17,35 @@ namespace pocketmine\network\mcpe\protocol;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 
 /**
- * TODO: this one has no handlers, so I have no idea which direction it should be sent
- * It doesn't appear to be used at all right now... this is just here to keep the scraper happy
+ * This is the first packet sent in a game session. It contains the client's protocol version.
+ * The server is expected to respond to this with network settings, which will instruct the client which compression
+ * type to use, amongst other things.
  */
-class PhotoInfoRequestPacket extends DataPacket{
-	public const NETWORK_ID = ProtocolInfo::PHOTO_INFO_REQUEST_PACKET;
+class RequestNetworkSettingsPacket extends DataPacket implements ServerboundPacket{
+	public const NETWORK_ID = ProtocolInfo::REQUEST_NETWORK_SETTINGS_PACKET;
 
-	private int $photoId;
+	private int $protocolVersion;
 
 	/**
 	 * @generate-create-func
 	 */
-	public static function create(int $photoId) : self{
+	public static function create(int $protocolVersion) : self{
 		$result = new self;
-		$result->photoId = $photoId;
+		$result->protocolVersion = $protocolVersion;
 		return $result;
 	}
 
-	public function getPhotoId() : int{ return $this->photoId; }
+	public function getProtocolVersion() : int{ return $this->protocolVersion; }
 
 	protected function decodePayload(PacketSerializer $in) : void{
-		$this->photoId = $in->getActorUniqueId();
+		$this->protocolVersion = $in->getInt();
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
-		$out->putActorUniqueId($this->photoId);
+		$out->putInt($this->protocolVersion);
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{
-		return $handler->handlePhotoInfoRequest($this);
+		return $handler->handleRequestNetworkSettings($this);
 	}
 }

@@ -41,7 +41,12 @@ use pocketmine\network\mcpe\protocol\types\FloatGameRule;
 use pocketmine\network\mcpe\protocol\types\GameRule;
 use pocketmine\network\mcpe\protocol\types\IntGameRule;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
+use pocketmine\network\mcpe\protocol\types\recipe\IntIdMetaItemDescriptor;
+use pocketmine\network\mcpe\protocol\types\recipe\ItemDescriptorType;
+use pocketmine\network\mcpe\protocol\types\recipe\MolangItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\recipe\RecipeIngredient;
+use pocketmine\network\mcpe\protocol\types\recipe\StringIdMetaItemDescriptor;
+use pocketmine\network\mcpe\protocol\types\recipe\TagItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\skin\PersonaPieceTintColor;
 use pocketmine\network\mcpe\protocol\types\skin\PersonaSkinPiece;
 use pocketmine\network\mcpe\protocol\types\skin\SkinAnimation;
@@ -383,24 +388,26 @@ class PacketSerializer extends BinaryStream{
 	}
 
 	public function getRecipeIngredient() : RecipeIngredient{
-		$id = $this->getVarInt();
-		if($id === 0){
-			return new RecipeIngredient(0, 0, 0);
-		}
-		$meta = $this->getVarInt();
+		$descriptorType = $this->getByte();
+		$descriptor = match($descriptorType){
+			ItemDescriptorType::INT_ID_META => IntIdMetaItemDescriptor::read($this),
+			ItemDescriptorType::STRING_ID_META => StringIdMetaItemDescriptor::read($this),
+			ItemDescriptorType::TAG => TagItemDescriptor::read($this),
+			ItemDescriptorType::MOLANG => MolangItemDescriptor::read($this),
+			default => null
+		};
 		$count = $this->getVarInt();
 
-		return new RecipeIngredient($id, $meta, $count);
+		return new RecipeIngredient($descriptor, $count);
 	}
 
 	public function putRecipeIngredient(RecipeIngredient $ingredient) : void{
-		if($ingredient->getId() === 0){
-			$this->putVarInt(0);
-		}else{
-			$this->putVarInt($ingredient->getId());
-			$this->putVarInt($ingredient->getMeta());
-			$this->putVarInt($ingredient->getCount());
-		}
+		$type = $ingredient->getDescriptor();
+
+		$this->putByte($type?->getTypeId() ?? 0);
+		$type?->write($this);
+
+		$this->putVarInt($ingredient->getCount());
 	}
 
 	/**
@@ -426,28 +433,18 @@ class PacketSerializer extends BinaryStream{
 	}
 
 	private function readMetadataProperty(int $type) : MetadataProperty{
-		switch($type){
-			case ByteMetadataProperty::ID:
-				return ByteMetadataProperty::read($this);
-			case ShortMetadataProperty::ID:
-				return ShortMetadataProperty::read($this);
-			case IntMetadataProperty::ID:
-				return IntMetadataProperty::read($this);
-			case FloatMetadataProperty::ID:
-				return FloatMetadataProperty::read($this);
-			case StringMetadataProperty::ID:
-				return StringMetadataProperty::read($this);
-			case CompoundTagMetadataProperty::ID:
-				return CompoundTagMetadataProperty::read($this);
-			case BlockPosMetadataProperty::ID:
-				return BlockPosMetadataProperty::read($this);
-			case LongMetadataProperty::ID:
-				return LongMetadataProperty::read($this);
-			case Vec3MetadataProperty::ID:
-				return Vec3MetadataProperty::read($this);
-			default:
-				throw new PacketDecodeException("Unknown entity metadata type " . $type);
-		}
+		return match($type){
+			ByteMetadataProperty::ID => ByteMetadataProperty::read($this),
+			ShortMetadataProperty::ID => ShortMetadataProperty::read($this),
+			IntMetadataProperty::ID => IntMetadataProperty::read($this),
+			FloatMetadataProperty::ID => FloatMetadataProperty::read($this),
+			StringMetadataProperty::ID => StringMetadataProperty::read($this),
+			CompoundTagMetadataProperty::ID => CompoundTagMetadataProperty::read($this),
+			BlockPosMetadataProperty::ID => BlockPosMetadataProperty::read($this),
+			LongMetadataProperty::ID => LongMetadataProperty::read($this),
+			Vec3MetadataProperty::ID => Vec3MetadataProperty::read($this),
+			default => throw new PacketDecodeException("Unknown entity metadata type " . $type),
+		};
 	}
 
 	/**
@@ -632,13 +629,12 @@ class PacketSerializer extends BinaryStream{
 	}
 
 	private function readGameRule(int $type, bool $isPlayerModifiable) : GameRule{
-		switch($type){
-			case BoolGameRule::ID: return BoolGameRule::decode($this, $isPlayerModifiable);
-			case IntGameRule::ID: return IntGameRule::decode($this, $isPlayerModifiable);
-			case FloatGameRule::ID: return FloatGameRule::decode($this, $isPlayerModifiable);
-			default:
-				throw new PacketDecodeException("Unknown gamerule type $type");
-		}
+		return match($type){
+			BoolGameRule::ID => BoolGameRule::decode($this, $isPlayerModifiable),
+			IntGameRule::ID => IntGameRule::decode($this, $isPlayerModifiable),
+			FloatGameRule::ID => FloatGameRule::decode($this, $isPlayerModifiable),
+			default => throw new PacketDecodeException("Unknown gamerule type $type"),
+		};
 	}
 
 	/**

@@ -12,34 +12,34 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\entity;
+namespace pocketmine\network\mcpe\protocol\types\recipe;
 
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
-use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\GetTypeIdFromConstTrait;
 
-final class BlockPosMetadataProperty implements MetadataProperty{
+final class MolangItemDescriptor implements ItemDescriptor{
 	use GetTypeIdFromConstTrait;
 
-	public const ID = EntityMetadataTypes::POS;
+	public const ID = ItemDescriptorType::MOLANG;
 
 	public function __construct(
-		private BlockPosition $value
+		private string $molangExpression,
+		private int $molangVersion
 	){}
 
-	public function getValue() : BlockPosition{
-		return $this->value;
-	}
+	public function getMolangExpression() : string{ return $this->molangExpression; }
+
+	public function getMolangVersion() : int{ return $this->molangVersion; }
 
 	public static function read(PacketSerializer $in) : self{
-		return new self($in->getSignedBlockPosition());
+		$expression = $in->getString();
+		$version = $in->getByte();
+
+		return new self($expression, $version);
 	}
 
 	public function write(PacketSerializer $out) : void{
-		$out->putSignedBlockPosition($this->value);
-	}
-
-	public function equals(MetadataProperty $other) : bool{
-		return $other instanceof self and $other->value->equals($this->value);
+		$out->putString($this->molangExpression);
+		$out->putByte($this->molangVersion);
 	}
 }

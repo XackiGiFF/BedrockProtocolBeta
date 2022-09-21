@@ -12,19 +12,17 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\entity;
+namespace pocketmine\network\mcpe\protocol\types;
 
-class EntityLink{
+/**
+ * List of supported compression algorithms for compressing packet batches.
+ */
+final class CompressionAlgorithm{
 
-	public const TYPE_REMOVE = 0;
-	public const TYPE_RIDER = 1;
-	public const TYPE_PASSENGER = 2;
+	private function __construct(){
+		//NOOP
+	}
 
-	public function __construct(
-		public int $fromActorUniqueId,
-		public int $toActorUniqueId,
-		public int $type,
-		public bool $immediate,
-		public bool $causedByRider
-	){}
+	public const ZLIB = 0;
+	public const SNAPPY = 1;
 }

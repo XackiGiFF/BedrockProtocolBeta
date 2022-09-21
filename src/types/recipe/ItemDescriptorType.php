@@ -12,19 +12,12 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\entity;
+namespace pocketmine\network\mcpe\protocol\types\recipe;
 
-class EntityLink{
+final class ItemDescriptorType{
 
-	public const TYPE_REMOVE = 0;
-	public const TYPE_RIDER = 1;
-	public const TYPE_PASSENGER = 2;
-
-	public function __construct(
-		public int $fromActorUniqueId,
-		public int $toActorUniqueId,
-		public int $type,
-		public bool $immediate,
-		public bool $causedByRider
-	){}
+	public const INT_ID_META = 1;
+	public const MOLANG = 2;
+	public const TAG = 3;
+	public const STRING_ID_META = 4;
 }

@@ -20,13 +20,9 @@ use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\utils\BinaryDataException;
 
 class PacketBatch{
-
-	/** @var string */
-	private $buffer;
-
-	public function __construct(string $buffer){
-		$this->buffer = $buffer;
-	}
+	public function __construct(
+		private string $buffer
+	){}
 
 	/**
 	 * @return \Generator|Packet[]|null[]
@@ -51,8 +47,6 @@ class PacketBatch{
 
 	/**
 	 * Constructs a packet batch from the given list of packets.
-	 *
-	 * @return PacketBatch
 	 */
 	public static function fromPackets(int $protocol, PacketSerializerContext $context, Packet ...$packets) : self{
 		$serializer = PacketSerializer::encoder($context);

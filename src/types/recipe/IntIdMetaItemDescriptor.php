@@ -12,34 +12,44 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\entity;
+namespace pocketmine\network\mcpe\protocol\types\recipe;
 
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
-use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\GetTypeIdFromConstTrait;
 
-final class BlockPosMetadataProperty implements MetadataProperty{
+final class IntIdMetaItemDescriptor implements ItemDescriptor{
 	use GetTypeIdFromConstTrait;
 
-	public const ID = EntityMetadataTypes::POS;
+	public const ID = ItemDescriptorType::INT_ID_META;
 
 	public function __construct(
-		private BlockPosition $value
-	){}
-
-	public function getValue() : BlockPosition{
-		return $this->value;
+		private int $id,
+		private int $meta
+	){
+		if($id === 0 && $meta !== 0){
+			throw new \InvalidArgumentException("Meta cannot be non-zero for air");
+		}
 	}
 
+	public function getId() : int{ return $this->id; }
+
+	public function getMeta() : int{ return $this->meta; }
+
 	public static function read(PacketSerializer $in) : self{
-		return new self($in->getSignedBlockPosition());
+		$id = $in->getSignedLShort();
+		if($id !== 0){
+			$meta = $in->getSignedLShort();
+		}else{
+			$meta = 0;
+		}
+
+		return new self($id, $meta);
 	}
 
 	public function write(PacketSerializer $out) : void{
-		$out->putSignedBlockPosition($this->value);
-	}
-
-	public function equals(MetadataProperty $other) : bool{
-		return $other instanceof self and $other->value->equals($this->value);
+		$out->putLShort($this->id);
+		if($this->id !== 0){
+			$out->putLShort($this->meta);
+		}
 	}
 }

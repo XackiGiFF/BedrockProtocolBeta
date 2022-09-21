@@ -33,8 +33,6 @@ class NormalTransactionData extends TransactionData{
 
 	/**
 	 * @param NetworkInventoryAction[] $actions
-	 *
-	 * @return NormalTransactionData
 	 */
 	public static function new(array $actions) : self{
 		$result = new self();

@@ -12,28 +12,29 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol\types\inventory;
+namespace pocketmine\network\mcpe\protocol\types\recipe;
 
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\types\GetTypeIdFromConstTrait;
 
-final class CreativeContentEntry{
+final class TagItemDescriptor implements ItemDescriptor{
+	use GetTypeIdFromConstTrait;
+
+	public const ID = ItemDescriptorType::TAG;
+
 	public function __construct(
-		private int $entryId,
-		private ItemStack $item
+		private string $tag
 	){}
 
-	public function getEntryId() : int{ return $this->entryId; }
-
-	public function getItem() : ItemStack{ return $this->item; }
+	public function getTag() : string{ return $this->tag; }
 
 	public static function read(PacketSerializer $in) : self{
-		$entryId = $in->readGenericTypeNetworkId();
-		$item = $in->getItemStackWithoutStackId();
-		return new self($entryId, $item);
+		$tag = $in->getString();
+
+		return new self($tag);
 	}
 
 	public function write(PacketSerializer $out) : void{
-		$out->writeGenericTypeNetworkId($this->entryId);
-		$out->putItemStackWithoutStackId($this->item);
+		$out->putString($this->tag);
 	}
 }

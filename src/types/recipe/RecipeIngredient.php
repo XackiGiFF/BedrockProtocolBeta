@@ -15,23 +15,13 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\protocol\types\recipe;
 
 final class RecipeIngredient{
+	public function __construct(
+		private ?ItemDescriptor $descriptor,
+		private int $count
+	){}
 
-	private int $id;
-	private int $meta;
-	private int $count;
-
-	public function __construct(int $id, int $meta, int $count){
-		$this->id = $id;
-		$this->meta = $meta;
-		$this->count = $count;
-	}
-
-	public function getId() : int{
-		return $this->id;
-	}
-
-	public function getMeta() : int{
-		return $this->meta;
+	public function getDescriptor() : ?ItemDescriptor{
+		return $this->descriptor;
 	}
 
 	public function getCount() : int{
