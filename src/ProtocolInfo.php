@@ -38,6 +38,7 @@ final class ProtocolInfo{
 	/** Version number sent to clients in ping responses. */
 	public const MINECRAFT_VERSION_NETWORK = '1.19.40';
 
+	public const PROTOCOL_557 = 557; // v1.19.40
 	public const PROTOCOL_554 = 554; // v1.19.30
 	public const PROTOCOL_545 = 545; // v1.19.21
 	public const PROTOCOL_544 = 544; // v1.19.20
@@ -48,6 +49,7 @@ final class ProtocolInfo{
 	public const PROTOCOL_475 = 475; // v1.18.0
 
 	public const COMPATIBLE_PROTOCOL = [
+		self::PROTOCOL_557,
 		self::PROTOCOL_554,
 		self::PROTOCOL_545,
 		self::PROTOCOL_544,

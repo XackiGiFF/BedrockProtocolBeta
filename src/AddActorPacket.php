@@ -108,7 +108,9 @@ class AddActorPacket extends DataPacket implements ClientboundPacket{
 		}
 
 		$this->metadata = $in->getEntityMetadata();
-		$this->syncedProperties = PropertySyncData::read($in);
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_557){
+			$this->syncedProperties = PropertySyncData::read($in);
+		}
 
 		$linkCount = $in->getUnsignedVarInt();
 		for($i = 0; $i < $linkCount; ++$i){
@@ -138,7 +140,9 @@ class AddActorPacket extends DataPacket implements ClientboundPacket{
 		}
 
 		$out->putEntityMetadata($this->metadata);
-		$this->syncedProperties->write($out);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_557){
+			$this->syncedProperties->write($out);
+		}
 
 		$out->putUnsignedVarInt(count($this->links));
 		foreach($this->links as $link){
