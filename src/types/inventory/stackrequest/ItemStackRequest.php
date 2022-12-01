@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\protocol\types\inventory\stackrequest;
 
 use pocketmine\network\mcpe\protocol\PacketDecodeException;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\utils\BinaryDataException;
 use function count;
@@ -86,7 +87,11 @@ final class ItemStackRequest{
 		for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
 			$filterStrings[] = $in->getString();
 		}
-		$filterStringCause = $in->getLInt();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+			$filterStringCause = $in->getLInt();
+		}else{
+			$filterStringCause = 0;
+		}
 		return new self($requestId, $actions, $filterStrings, $filterStringCause);
 	}
 
@@ -101,6 +106,8 @@ final class ItemStackRequest{
 		foreach($this->filterStrings as $string){
 			$out->putString($string);
 		}
-		$out->putLInt($this->filterStringCause);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+			$out->putLInt($this->filterStringCause);
+		}
 	}
 }

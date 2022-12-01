@@ -30,6 +30,7 @@ use pocketmine\network\mcpe\protocol\types\entity\BlockPosMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\ByteMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\CompoundTagMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\EntityLink;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
 use pocketmine\network\mcpe\protocol\types\entity\FloatMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\IntMetadataProperty;
 use pocketmine\network\mcpe\protocol\types\entity\LongMetadataProperty;
@@ -443,7 +444,7 @@ class PacketSerializer extends BinaryStream{
 			$data[$key] = $this->readMetadataProperty($type);
 		}
 
-		return $data;
+		return EntityMetadataFlags::decode($data, $this->getProtocol());
 	}
 
 	private function readMetadataProperty(int $type) : MetadataProperty{
@@ -470,7 +471,7 @@ class PacketSerializer extends BinaryStream{
 	 */
 	public function putEntityMetadata(array $metadata) : void{
 		$this->putUnsignedVarInt(count($metadata));
-		foreach($metadata as $key => $d){
+		foreach(EntityMetadataFlags::encode($metadata, $this->getProtocol()) as $key => $d){
 			$this->putUnsignedVarInt($key);
 			$this->putUnsignedVarInt($d->getTypeId());
 			$d->write($this);
@@ -743,7 +744,11 @@ class PacketSerializer extends BinaryStream{
 
 		$result->ignoreEntities = $this->getBool();
 		$result->ignoreBlocks = $this->getBool();
-		$result->allowNonTickingChunks = $this->getBool();
+		if($this->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+			$result->allowNonTickingChunks = $this->getBool();
+		}else{
+			$result->allowNonTickingChunks = false;
+		}
 
 		$result->dimensions = $this->getBlockPosition();
 		$result->offset = $this->getBlockPosition();
@@ -765,7 +770,9 @@ class PacketSerializer extends BinaryStream{
 
 		$this->putBool($structureSettings->ignoreEntities);
 		$this->putBool($structureSettings->ignoreBlocks);
-		$this->putBool($structureSettings->allowNonTickingChunks);
+		if($this->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+			$this->putBool($structureSettings->allowNonTickingChunks);
+		}
 
 		$this->putBlockPosition($structureSettings->dimensions);
 		$this->putBlockPosition($structureSettings->offset);

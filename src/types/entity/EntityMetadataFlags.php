@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types\entity;
 
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
+
 final class EntityMetadataFlags{
 
 	private function __construct(){
@@ -120,4 +122,81 @@ final class EntityMetadataFlags{
 	public const PLAYING_DEAD = 98;
 	public const IN_ASCENDABLE_BLOCK = 99;
 	public const OVER_DESCENDABLE_BLOCK = 100;
+
+	/**
+	 * Rewrites the MetadataFlags from the latest protocol version to the given protocol version.
+	 *
+	 * @param MetadataProperty[] $metadata
+	 * @phpstan-param array<int, MetadataProperty> $metadata
+	 *
+	 * @return MetadataProperty[]
+	 * @phpstan-return array<int, MetadataProperty>
+	 */
+	public static function encode(array $metadata, int $protocol) : array{
+		if($protocol <= ProtocolInfo::PROTOCOL_557){
+			/** @var LongMetadataProperty $flag1Property */
+			$flag1Property = $metadata[EntityMetadataProperties::FLAGS] ?? new LongMetadataProperty(0);
+			/** @var LongMetadataProperty $flag2Property */
+			$flag2Property = $metadata[EntityMetadataProperties::FLAGS2] ?? new LongMetadataProperty(0);
+			$flag1 = $flag1Property->getValue();
+			$flag2 = $flag2Property->getValue();
+
+			if($flag1 === 0 && $flag2 === 0){
+				return $metadata;
+			}
+
+			$newFlag1 = $flag1 & ~(~0 << (self::CAN_DASH - 1)); // don't include CAN_DASH and above
+			$lastHalf = $flag1 & (~0 << self::CAN_DASH); // starting above CAN_DASH
+			$lastHalf >>= 1; // shift right by 1
+			$lastHalf &= PHP_INT_MAX; // make sure the sign bit is 0 by default
+
+			$newFlag1 |= $lastHalf; // combine the two halves
+
+			if($flag2 !== 0) {
+				$flag2 = $flag2Property->getValue();
+				$newFlag1 ^= ($flag2 & 1) << 63; // insert the first bit of flag2 into the last bit of flag1
+				$flag2 >>= 1; // shift right by 1
+				$flag2 &= PHP_INT_MAX; // make sure the sign bit is 0 by default
+
+				$metadata[EntityMetadataProperties::FLAGS2] = new LongMetadataProperty($flag2);
+			}
+
+			$metadata[EntityMetadataProperties::FLAGS] = new LongMetadataProperty($newFlag1);
+		}
+
+		return $metadata;
+	}
+
+	/**
+	 * Rewrites the MetadataFlags from the given protocol version to the latest protocol version.
+	 *
+	 * @param MetadataProperty[] $metadata
+	 * @phpstan-param array<int, MetadataProperty> $metadata
+	 *
+	 * @return MetadataProperty[]
+	 * @phpstan-return array<int, MetadataProperty>
+	 */
+	public static function decode(array $metadata, int $protocol) : array{
+		if($protocol <= ProtocolInfo::PROTOCOL_557){
+			/** @var LongMetadataProperty $flag1Property */
+			$flag1Property = $metadata[EntityMetadataProperties::FLAGS] ?? new LongMetadataProperty(0);
+			/** @var LongMetadataProperty $flag2Property */
+			$flag2Property = $metadata[EntityMetadataProperties::FLAGS2] ?? new LongMetadataProperty(0);
+			$flag1 = $flag1Property->getValue();
+			$flag2 = $flag2Property->getValue();
+
+			$flag2 <<= 1; // shift left by 1, leaving a 0 at the end
+			$flag2 |= (($flag1 >> 63) & 1); // push the last bit from flag1 to the first bit of flag2
+
+			$newFlag1 = $flag1 & ~(~0 << (self::CAN_DASH - 1)); // don't include CAN_DASH and above
+			$lastHalf = $flag1 & (~0 << (self::CAN_DASH - 1)); // include everything after where CAN_DASH would be
+			$lastHalf <<= 1; // shift left by 1, CAN_DASH is now 0
+			$newFlag1 |= $lastHalf; // combine the two halves
+
+			$metadata[EntityMetadataProperties::FLAGS2] = new LongMetadataProperty($flag2);
+			$metadata[EntityMetadataProperties::FLAGS] = new LongMetadataProperty($newFlag1);
+		}
+
+		return $metadata;
+	}
 }
