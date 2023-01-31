@@ -7,13 +7,13 @@
         "ext-json": "*",
         "netresearch/jsonmapper": "^4.0",
         "venitynetwork/binaryutils": "dev-master",
-        "pocketmine/color": "^0.2.0",
+        "pocketmine/color": "^0.2.0 || ^0.3.0",
         "pocketmine/math": "^0.3.0 || ^0.4.0",
         "venitynetwork/nbt": "dev-master",
         "ramsey/uuid": "^4.1"
     },
     "require-dev": {
-        "phpstan/phpstan": "1.9.0",
+        "phpstan/phpstan": "1.9.13",
         "phpstan/phpstan-phpunit": "^1.0.0",
         "phpstan/phpstan-strict-rules": "^1.0.0",
         "phpunit/phpunit": "^9.5"
