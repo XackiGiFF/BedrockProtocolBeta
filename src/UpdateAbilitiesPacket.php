@@ -38,10 +38,31 @@ class UpdateAbilitiesPacket extends DataPacket implements ClientboundPacket{
 	public function getData() : AbilitiesData{ return $this->data; }
 
 	protected function decodePayload(PacketSerializer $in) : void{
+		if($in->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$in->getUnsignedVarInt(); // flags
+			$commandPermission = $in->getUnsignedVarInt();
+			$in->getUnsignedVarInt(); // flags 2
+			$playerPermission = $in->getUnsignedVarInt();
+			$in->getUnsignedVarInt(); // custom flags
+			$targetActorUniqueId = $in->getLLong();
+			$abilityLayers = [];
+
+			$this->data = new AbilitiesData($commandPermission, $playerPermission, $targetActorUniqueId, $abilityLayers);
+			return;
+		}
 		$this->data = AbilitiesData::decode($in);
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
+		if($out->getProtocol() < ProtocolInfo::PROTOCOL_534) {
+			$out->putUnsignedVarInt(0); // flags
+			$out->putUnsignedVarInt($this->data->getCommandPermission());
+			$out->putUnsignedVarInt(0); // flags2
+			$out->putUnsignedVarInt($this->data->getPlayerPermission());
+			$out->putUnsignedVarInt(0); // custom flags
+			$out->putLLong($this->data->getTargetActorUniqueId());
+			return;
+		}
 		$this->data->encode($out);
 	}
 
