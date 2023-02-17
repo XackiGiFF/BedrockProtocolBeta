@@ -239,7 +239,9 @@ class PacketSerializer extends BinaryStream{
 		$this->putBool($skin->isPersona());
 		$this->putBool($skin->isPersonaCapeOnClassic());
 		$this->putBool($skin->isPrimaryUser());
-		$this->putBool($skin->isOverride());
+		if($this->getProtocol() >= ProtocolInfo::PROTOCOL_568){
+			$this->putBool($skin->isOverride());
+		}
 	}
 
 	private function getSkinImage() : SkinImage{
