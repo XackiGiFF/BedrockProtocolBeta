@@ -56,13 +56,15 @@ class PacketBatch{
 	 * @phpstan-return \Generator<int, Packet, void, void>
 	 * @throws PacketDecodeException
 	 */
-	final public static function decodePackets(BinaryStream $stream, PacketSerializerContext $context, PacketPool $packetPool) : \Generator{
+	final public static function decodePackets(BinaryStream $stream, PacketSerializerContext $context, PacketPool $packetPool, int $protocol) : \Generator{
 		$c = 0;
 		foreach(self::decodeRaw($stream) as $packetBuffer){
 			$packet = $packetPool->getPacket($packetBuffer);
 			if($packet !== null){
 				try{
-					$packet->decode(PacketSerializer::decoder($packetBuffer, 0, $context));
+					$decoder = PacketSerializer::decoder($packetBuffer, 0, $context);
+					$decoder->setProtocol($protocol);
+					$packet->decode($decoder);
 				}catch(PacketDecodeException $e){
 					throw new PacketDecodeException("Error decoding packet $c in batch: " . $e->getMessage(), 0, $e);
 				}
@@ -78,9 +80,10 @@ class PacketBatch{
 	 * @param Packet[]       $packets
 	 * @phpstan-param list<Packet> $packets
 	 */
-	final public static function encodePackets(BinaryStream $stream, PacketSerializerContext $context, array $packets) : void{
+	final public static function encodePackets(BinaryStream $stream, PacketSerializerContext $context, array $packets, int $protocol) : void{
 		foreach($packets as $packet){
 			$serializer = PacketSerializer::encoder($context);
+			$serializer->setProtocol($protocol);
 			$packet->encode($serializer);
 			$stream->putUnsignedVarInt(strlen($serializer->getBuffer()));
 			$stream->put($serializer->getBuffer());
@@ -100,7 +103,7 @@ class PacketBatch{
 	 * @phpstan-return \Generator<int, array{?Packet, string}, void, void>
 	 * @throws PacketDecodeException
 	 */
-	public function getPackets(int $protocol, PacketPool $packetPool, PacketSerializerContext $decoderContext, int $max) : \Generator{
+	public function getPackets(PacketPool $packetPool, PacketSerializerContext $decoderContext, int $max) : \Generator{
 		$stream = new BinaryStream($this->buffer);
 		$c = 0;
 		try{
@@ -119,9 +122,9 @@ class PacketBatch{
 	 * @deprecated
 	 * Constructs a packet batch from the given list of packets.
 	 */
-	public static function fromPackets(PacketSerializerContext $context, Packet ...$packets) : self{
+	public static function fromPackets(int $protocol, PacketSerializerContext $context, Packet ...$packets) : self{
 		$stream = new BinaryStream();
-		self::encodePackets($stream, $context, $packets);
+		self::encodePackets($stream, $context, $packets, $protocol);
 		return new self($stream->getBuffer());
 	}
 
