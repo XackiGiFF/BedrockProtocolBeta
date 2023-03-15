@@ -39,6 +39,7 @@ final class ProtocolInfo{
 	public const MINECRAFT_VERSION_NETWORK = '1.19.70';
 
 	// TODO: 1.19.62 is not 568, it's 567. We made it 568 to avoid conflicts with 1.19.60
+	public const PROTOCOL_575 = 575; // 1.19.70
 	public const PROTOCOL_568 = 568; // 1.19.62
 	public const PROTOCOL_567 = 567; // 1.19.60
 	public const PROTOCOL_560 = 560; // v1.19.50
@@ -53,6 +54,7 @@ final class ProtocolInfo{
 	public const PROTOCOL_475 = 475; // v1.18.0
 
 	public const COMPATIBLE_PROTOCOL = [
+		self::PROTOCOL_575,
 		self::PROTOCOL_568,
 		self::PROTOCOL_567,
 		self::PROTOCOL_560,

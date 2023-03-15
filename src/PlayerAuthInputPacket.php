@@ -242,8 +242,10 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 				};
 			}
 		}
-		$this->analogMoveVecX = $in->getLFloat();
-		$this->analogMoveVecZ = $in->getLFloat();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_575){
+			$this->analogMoveVecX = $in->getLFloat();
+			$this->analogMoveVecZ = $in->getLFloat();
+		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
@@ -278,8 +280,10 @@ class PlayerAuthInputPacket extends DataPacket implements ServerboundPacket{
 				$blockAction->write($out);
 			}
 		}
-		$out->putLFloat($this->analogMoveVecX);
-		$out->putLFloat($this->analogMoveVecZ);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_575){
+			$out->putLFloat($this->analogMoveVecX);
+			$out->putLFloat($this->analogMoveVecZ);
+		}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

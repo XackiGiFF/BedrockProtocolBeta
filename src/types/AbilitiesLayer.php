@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\protocol\types;
 
 use pocketmine\network\mcpe\protocol\PacketDecodeException;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 
 final class AbilitiesLayer{
@@ -79,7 +80,11 @@ final class AbilitiesLayer{
 		$walkSpeed = $in->getLFloat();
 
 		$boolAbilities = [];
-		for($i = 0; $i < self::NUMBER_OF_ABILITIES; $i++){
+		$numberOfAbilities = self::NUMBER_OF_ABILITIES;
+		if($in->getProtocol() < ProtocolInfo::PROTOCOL_575) {
+			$numberOfAbilities = 18;
+		}
+		for($i = 0; $i < $numberOfAbilities; $i++){
 			if($i === self::ABILITY_FLY_SPEED || $i === self::ABILITY_WALK_SPEED){
 				continue;
 			}
