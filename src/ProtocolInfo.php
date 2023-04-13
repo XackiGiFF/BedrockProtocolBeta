@@ -38,6 +38,8 @@ final class ProtocolInfo{
 	/** Version number sent to clients in ping responses. */
 	public const MINECRAFT_VERSION_NETWORK = '1.19.70';
 
+	public const BASE_VERSION = '1.18.0';
+
 	// TODO: 1.19.62 is not 568, it's 567. We made it 568 to avoid conflicts with 1.19.60
 	public const PROTOCOL_575 = 575; // 1.19.70
 	public const PROTOCOL_568 = 568; // 1.19.62

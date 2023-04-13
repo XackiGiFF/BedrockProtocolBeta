@@ -38,7 +38,7 @@ class SkinData{
 		private array $animations = [],
 		SkinImage $capeImage = null,
 		private string $geometryData = "",
-		private string $geometryDataEngineVersion = ProtocolInfo::MINECRAFT_VERSION_NETWORK,
+		private string $geometryDataEngineVersion = ProtocolInfo::BASE_VERSION,
 		private string $animationData = "",
 		private string $capeId = "",
 		?string $fullSkinId = null,
