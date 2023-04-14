@@ -56,7 +56,7 @@ class PacketBatch{
 	 * @phpstan-return \Generator<int, Packet, void, void>
 	 * @throws PacketDecodeException
 	 */
-	final public static function decodePackets(BinaryStream $stream, PacketSerializerContext $context, PacketPool $packetPool, int $protocol) : \Generator{
+	final public static function decodePackets(BinaryStream $stream, PacketSerializerContext $context, PacketPool $packetPool) : \Generator{
 		$c = 0;
 		foreach(self::decodeRaw($stream) as $packetBuffer){
 			$packet = $packetPool->getPacket($packetBuffer);
@@ -79,7 +79,7 @@ class PacketBatch{
 	 * @param Packet[]       $packets
 	 * @phpstan-param list<Packet> $packets
 	 */
-	final public static function encodePackets(BinaryStream $stream, PacketSerializerContext $context, array $packets, int $protocol) : void{
+	final public static function encodePackets(BinaryStream $stream, PacketSerializerContext $context, array $packets) : void{
 		foreach($packets as $packet){
 			$serializer = PacketSerializer::encoder($context);
 			$packet->encode($serializer);
@@ -120,9 +120,9 @@ class PacketBatch{
 	 * @deprecated
 	 * Constructs a packet batch from the given list of packets.
 	 */
-	public static function fromPackets(int $protocol, PacketSerializerContext $context, Packet ...$packets) : self{
+	public static function fromPackets(PacketSerializerContext $context, Packet ...$packets) : self{
 		$stream = new BinaryStream();
-		self::encodePackets($stream, $context, $packets, $protocol);
+		self::encodePackets($stream, $context, $packets);
 		return new self($stream->getBuffer());
 	}
 
