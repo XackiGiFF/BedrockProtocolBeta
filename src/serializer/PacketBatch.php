@@ -63,7 +63,6 @@ class PacketBatch{
 			if($packet !== null){
 				try{
 					$decoder = PacketSerializer::decoder($packetBuffer, 0, $context);
-					$decoder->setProtocol($protocol);
 					$packet->decode($decoder);
 				}catch(PacketDecodeException $e){
 					throw new PacketDecodeException("Error decoding packet $c in batch: " . $e->getMessage(), 0, $e);
@@ -83,7 +82,6 @@ class PacketBatch{
 	final public static function encodePackets(BinaryStream $stream, PacketSerializerContext $context, array $packets, int $protocol) : void{
 		foreach($packets as $packet){
 			$serializer = PacketSerializer::encoder($context);
-			$serializer->setProtocol($protocol);
 			$packet->encode($serializer);
 			$stream->putUnsignedVarInt(strlen($serializer->getBuffer()));
 			$stream->put($serializer->getBuffer());

@@ -70,7 +70,6 @@ class PacketSerializer extends BinaryStream{
 
 	private int $shieldItemRuntimeId;
 	private PacketSerializerContext $context;
-	private int $protocol;
 
 	protected function __construct(PacketSerializerContext $context, string $buffer = "", int $offset = 0){
 		parent::__construct($buffer, $offset);
@@ -86,12 +85,8 @@ class PacketSerializer extends BinaryStream{
 		return new self($context, $buffer, $offset);
 	}
 
-	public function setProtocol(int $protocol) : void{
-		$this->protocol = $protocol;
-	}
-
 	public function getProtocol() : int{
-		return $this->protocol ?? ProtocolInfo::CURRENT_PROTOCOL;
+		return $this->context->getProtocol();
 	}
 
 	/**
@@ -299,7 +294,6 @@ class PacketSerializer extends BinaryStream{
 
 		$blockRuntimeId = $this->getVarInt();
 		$extraData = self::decoder($this->getString(), 0, $this->context);
-		$extraData->setProtocol($this->protocol);
 		return (static function() use ($extraData, $id, $meta, $count, $blockRuntimeId) : ItemStack{
 			$nbtLen = $extraData->getLShort();
 
@@ -363,10 +357,8 @@ class PacketSerializer extends BinaryStream{
 
 		$this->putVarInt($item->getBlockRuntimeId());
 		$context = $this->context;
-		$protocol = $this->protocol;
-		$this->putString((static function() use ($item, $context, $protocol) : string{
+		$this->putString((static function() use ($item, $context) : string{
 			$extraData = PacketSerializer::encoder($context);
-			$extraData->setProtocol($protocol);
 
 			$nbt = $item->getNbt();
 			if($nbt !== null){

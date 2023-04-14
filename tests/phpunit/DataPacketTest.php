@@ -36,7 +36,7 @@ class DataPacketTest extends TestCase{
 		$pk->senderSubId = 3;
 		$pk->recipientSubId = 2;
 
-		$context = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]));
+		$context = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]), ProtocolInfo::CURRENT_PROTOCOL);
 		$serializer = PacketSerializer::encoder($context);
 		$pk->encode($serializer);
 

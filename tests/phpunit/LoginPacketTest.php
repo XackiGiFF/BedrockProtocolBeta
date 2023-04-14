@@ -34,7 +34,7 @@ use function strlen;
 class LoginPacketTest extends TestCase{
 
 	public function testInvalidChainDataJsonHandling() : void{
-		$context = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]));
+		$context = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]), ProtocolInfo::CURRENT_PROTOCOL);
 		$stream = PacketSerializer::encoder($context);
 		$stream->putUnsignedVarInt(ProtocolInfo::LOGIN_PACKET);
 		$payload = '{"chain":[]'; //intentionally malformed

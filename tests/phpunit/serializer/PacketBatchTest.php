@@ -39,7 +39,7 @@ class PacketBatchTest extends TestCase{
 
 	public function testDecodeTooBig() : void{
 		$limit = 10;
-		$decoderContext = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]));
+		$decoderContext = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]), ProtocolInfo::CURRENT_PROTOCOL);
 		$write = PacketBatch::fromPackets(ProtocolInfo::CURRENT_PROTOCOL, $decoderContext, ...array_fill(0, $limit + 1, new TestPacket()));
 		$read = new PacketBatch($write->getBuffer());
 		$this->expectException(PacketDecodeException::class);
@@ -51,7 +51,7 @@ class PacketBatchTest extends TestCase{
 
 	public function testDecodeAtLimit() : void{
 		$limit = 10;
-		$decoderContext = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]));
+		$decoderContext = new PacketSerializerContext(new ItemTypeDictionary([new ItemTypeEntry("minecraft:shield", 0, false)]), ProtocolInfo::CURRENT_PROTOCOL);
 		$write = PacketBatch::fromPackets(ProtocolInfo::CURRENT_PROTOCOL, $decoderContext, ...array_fill(0, $limit, new TestPacket()));
 		$read = new PacketBatch($write->getBuffer());
 		$readCount = 0;

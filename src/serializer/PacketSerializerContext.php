@@ -20,8 +20,11 @@ namespace pocketmine\network\mcpe\protocol\serializer;
  */
 final class PacketSerializerContext{
 	public function __construct(
-		private ItemTypeDictionary $itemDictionary
+		private ItemTypeDictionary $itemDictionary,
+		private int $protocol,
 	){}
 
 	public function getItemDictionary() : ItemTypeDictionary{ return $this->itemDictionary; }
+
+	public function getProtocol(): int{ return $this->protocol; }
 }
