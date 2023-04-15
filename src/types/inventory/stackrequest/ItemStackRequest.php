@@ -87,7 +87,7 @@ final class ItemStackRequest{
 		for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
 			$filterStrings[] = $in->getString();
 		}
-		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_557){
 			$filterStringCause = $in->getLInt();
 		}else{
 			$filterStringCause = 0;
@@ -106,7 +106,7 @@ final class ItemStackRequest{
 		foreach($this->filterStrings as $string){
 			$out->putString($string);
 		}
-		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_560){
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_557){
 			$out->putLInt($this->filterStringCause);
 		}
 	}
