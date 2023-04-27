@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\protocol\types\recipe;
 
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
 
@@ -48,7 +49,11 @@ final class SmithingTransformRecipe extends RecipeWithTypeId{
 
 	public static function decode(int $typeId, PacketSerializer $in) : self{
 		$recipeId = $in->getString();
-		$template = $in->getRecipeIngredient();
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$template = $in->getRecipeIngredient();
+		}else{
+			$template = new RecipeIngredient(null, 0);
+		}
 		$input = $in->getRecipeIngredient();
 		$addition = $in->getRecipeIngredient();
 		$output = $in->getItemStackWithoutStackId();
@@ -69,7 +74,9 @@ final class SmithingTransformRecipe extends RecipeWithTypeId{
 
 	public function encode(PacketSerializer $out) : void{
 		$out->putString($this->recipeId);
-		$out->putRecipeIngredient($this->template);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$out->putRecipeIngredient($this->template);
+		}
 		$out->putRecipeIngredient($this->input);
 		$out->putRecipeIngredient($this->addition);
 		$out->putItemStackWithoutStackId($this->output);
