@@ -352,8 +352,6 @@ interface PacketHandlerInterface{
 
 	public function handleUpdateSubChunkBlocks(UpdateSubChunkBlocksPacket $packet) : bool;
 
-	public function handlePhotoInfoRequest(PhotoInfoRequestPacket $packet) : bool;
-
 	public function handleSubChunk(SubChunkPacket $packet) : bool;
 
 	public function handleSubChunkRequest(SubChunkRequestPacket $packet) : bool;
@@ -407,4 +405,10 @@ interface PacketHandlerInterface{
 	public function handleUnlockedRecipes(UnlockedRecipesPacket $packet) : bool;
 
 	public function handleCameraInstruction(CameraInstructionPacket $packet) : bool;
+
+	public function handleCompressedBiomeDefinitionList(CompressedBiomeDefinitionListPacket $packet) : bool;
+
+	public function handleTrimData(TrimDataPacket $packet) : bool;
+
+	public function handleOpenSign(OpenSignPacket $packet) : bool;
 }

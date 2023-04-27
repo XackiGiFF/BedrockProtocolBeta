@@ -29,6 +29,8 @@ final class LevelSettings{
 	public BlockPosition $spawnPosition;
 	public bool $hasAchievementsDisabled = true;
 	public bool $isEditorMode = false;
+	public bool $createdInEditorMode = false;
+	public bool $exportedFromEditorMode = false;
 	public int $time = -1;
 	public int $eduEditionOffer = EducationEditionOffer::NONE;
 	public bool $hasEduFeaturesEnabled = false;
@@ -104,6 +106,10 @@ final class LevelSettings{
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_534){
 			$this->isEditorMode = $in->getBool();
 		}
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$this->createdInEditorMode = $in->getBool();
+			$this->exportedFromEditorMode = $in->getBool();
+		}
 		$this->time = $in->getVarInt();
 		$this->eduEditionOffer = $in->getVarInt();
 		$this->hasEduFeaturesEnabled = $in->getBool();
@@ -163,6 +169,10 @@ final class LevelSettings{
 		$out->putBool($this->hasAchievementsDisabled);
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_534){
 			$out->putBool($this->isEditorMode);
+		}
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$out->putBool($this->createdInEditorMode);
+			$out->putBool($this->exportedFromEditorMode);
 		}
 		$out->putVarInt($this->time);
 		$out->putVarInt($this->eduEditionOffer);

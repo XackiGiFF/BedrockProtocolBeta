@@ -690,10 +690,6 @@ trait PacketHandlerDefaultImplTrait{
 		return false;
 	}
 
-	public function handlePhotoInfoRequest(PhotoInfoRequestPacket $packet) : bool{
-		return false;
-	}
-
 	public function handleSubChunk(SubChunkPacket $packet) : bool{
 		return false;
 	}
@@ -799,6 +795,18 @@ trait PacketHandlerDefaultImplTrait{
 	}
 
 	public function handleCameraInstruction(CameraInstructionPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleCompressedBiomeDefinitionList(CompressedBiomeDefinitionListPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleTrimData(TrimDataPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleOpenSign(OpenSignPacket $packet) : bool{
 		return false;
 	}
 }

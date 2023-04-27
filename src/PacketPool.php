@@ -200,7 +200,6 @@ class PacketPool{
 		$this->registerPacket(new EduUriResourcePacket());
 		$this->registerPacket(new CreatePhotoPacket());
 		$this->registerPacket(new UpdateSubChunkBlocksPacket());
-		$this->registerPacket(new PhotoInfoRequestPacket());
 		$this->registerPacket(new SubChunkPacket());
 		$this->registerPacket(new SubChunkRequestPacket());
 		$this->registerPacket(new PlayerStartItemCooldownPacket());
@@ -228,6 +227,9 @@ class PacketPool{
 		$this->registerPacket(new CameraPresetsPacket());
 		$this->registerPacket(new UnlockedRecipesPacket());
 		$this->registerPacket(new CameraInstructionPacket());
+		$this->registerPacket(new CompressedBiomeDefinitionListPacket());
+		$this->registerPacket(new TrimDataPacket());
+		$this->registerPacket(new OpenSignPacket());
 	}
 
 	public function registerPacket(Packet $packet) : void{

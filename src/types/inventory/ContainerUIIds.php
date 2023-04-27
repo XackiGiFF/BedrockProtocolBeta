@@ -84,6 +84,7 @@ final class ContainerUIIds{
 	public const BARREL = 58;
 	public const CURSOR = 59;
 	public const CREATED_OUTPUT = 60;
+	public const SMITHING_TABLE_TEMPLATE = 61;
 
 	public static function write(PacketSerializer $out, int $containerId) : void{
 		if($out->getProtocol() < ProtocolInfo::PROTOCOL_560){

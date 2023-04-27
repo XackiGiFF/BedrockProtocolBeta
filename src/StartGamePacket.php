@@ -54,6 +54,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 	public string $serverSoftwareVersion;
 	public UuidInterface $worldTemplateId; //why is this here twice ??? mojang
 	public bool $enableClientSideChunkGeneration;
+	public bool $blockNetworkIdsAreHashes = false; //new in 1.19.80, possibly useful for multi version
 
 	/**
 	 * @var BlockPaletteEntry[]
@@ -103,6 +104,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		string $serverSoftwareVersion,
 		UuidInterface $worldTemplateId,
 		bool $enableClientSideChunkGeneration,
+		bool $blockNetworkIdsAreHashes,
 		array $blockPalette,
 		int $blockPaletteChecksum,
 		array $itemTable,
@@ -128,6 +130,7 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		$result->serverSoftwareVersion = $serverSoftwareVersion;
 		$result->worldTemplateId = $worldTemplateId;
 		$result->enableClientSideChunkGeneration = $enableClientSideChunkGeneration;
+		$result->blockNetworkIdsAreHashes = $blockNetworkIdsAreHashes;
 		$result->blockPalette = $blockPalette;
 		$result->blockPaletteChecksum = $blockPaletteChecksum;
 		$result->itemTable = $itemTable;
@@ -184,6 +187,9 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($in->getProtocol() >= Protocolinfo::PROTOCOL_544){
 			$this->enableClientSideChunkGeneration = $in->getBool();
 		}
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$this->blockNetworkIdsAreHashes = $in->getBool();
+		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
@@ -230,8 +236,11 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_527){
 			$out->putUUID($this->worldTemplateId);
 		}
-		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544) {
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_544){
 			$out->putBool($this->enableClientSideChunkGeneration);
+		}
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_582){
+			$out->putBool($this->blockNetworkIdsAreHashes);
 		}
 	}
 
