@@ -194,7 +194,9 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_582){
 			$this->blockNetworkIdsAreHashes = $in->getBool();
 		}
-		$this->networkPermissions = NetworkPermissions::decode($in);
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_589){
+			$this->networkPermissions = NetworkPermissions::decode($in);
+		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
@@ -247,7 +249,9 @@ class StartGamePacket extends DataPacket implements ClientboundPacket{
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_582){
 			$out->putBool($this->blockNetworkIdsAreHashes);
 		}
-		$this->networkPermissions->encode($out);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_589){
+			$this->networkPermissions->encode($out);
+		}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{

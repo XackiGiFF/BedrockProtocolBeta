@@ -40,7 +40,7 @@ final class ProtocolInfo{
 
 	public const BASE_VERSION = '1.18.0';
 
-	// TODO: 1.19.62 is not 568, it's 567. We made it 568 to avoid conflicts with 1.19.60
+	public const PROTOCOL_589 = 589; // 1.20.0
 	public const PROTOCOL_582 = 582; // 1.19.80
 	public const PROTOCOL_575 = 575; // 1.19.70
 	public const PROTOCOL_568 = 568; // 1.19.62
@@ -57,6 +57,7 @@ final class ProtocolInfo{
 	public const PROTOCOL_475 = 475; // v1.18.0
 
 	public const COMPATIBLE_PROTOCOL = [
+		self::PROTOCOL_589,
 		self::PROTOCOL_582,
 		self::PROTOCOL_575,
 		self::PROTOCOL_568,
@@ -69,8 +70,7 @@ final class ProtocolInfo{
 		self::PROTOCOL_534,
 		self::PROTOCOL_527,
 		self::PROTOCOL_503,
-		self::PROTOCOL_486,
-		self::PROTOCOL_475
+		self::PROTOCOL_486
 	];
 
 	public const LOGIN_PACKET = 0x01;
