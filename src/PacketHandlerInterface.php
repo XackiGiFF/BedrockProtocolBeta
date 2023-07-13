@@ -142,7 +142,7 @@ interface PacketHandlerInterface{
 
 	public function handleSimpleEvent(SimpleEventPacket $packet) : bool;
 
-	public function handleEvent(EventPacket $packet) : bool;
+	public function handleLegacyTelemetryEvent(LegacyTelemetryEventPacket $packet) : bool;
 
 	public function handleSpawnExperienceOrb(SpawnExperienceOrbPacket $packet) : bool;
 
@@ -243,8 +243,6 @@ interface PacketHandlerInterface{
 	public function handleUpdateSoftEnum(UpdateSoftEnumPacket $packet) : bool;
 
 	public function handleNetworkStackLatency(NetworkStackLatencyPacket $packet) : bool;
-
-	public function handleScriptCustomEvent(ScriptCustomEventPacket $packet) : bool;
 
 	public function handleSpawnParticleEffect(SpawnParticleEffectPacket $packet) : bool;
 
@@ -398,8 +396,6 @@ interface PacketHandlerInterface{
 
 	public function handleUpdateClientInputLocks(UpdateClientInputLocksPacket $packet) : bool;
 
-	public function handleClientCheatAbility(ClientCheatAbilityPacket $packet) : bool;
-
 	public function handleCameraPresets(CameraPresetsPacket $packet) : bool;
 
 	public function handleUnlockedRecipes(UnlockedRecipesPacket $packet) : bool;
@@ -411,4 +407,6 @@ interface PacketHandlerInterface{
 	public function handleTrimData(TrimDataPacket $packet) : bool;
 
 	public function handleOpenSign(OpenSignPacket $packet) : bool;
+
+	public function handleAgentAnimation(AgentAnimationPacket $packet) : bool;
 }
