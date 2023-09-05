@@ -60,19 +60,19 @@ final class ProtocolInfo{
 	public const COMPATIBLE_PROTOCOL = [
 		self::PROTOCOL_594,
 		self::PROTOCOL_589,
-		self::PROTOCOL_582,
-		self::PROTOCOL_575,
-		self::PROTOCOL_568,
-		self::PROTOCOL_567,
-		self::PROTOCOL_560,
-		self::PROTOCOL_557,
-		self::PROTOCOL_554,
-		self::PROTOCOL_545,
-		self::PROTOCOL_544,
-		self::PROTOCOL_534,
-		self::PROTOCOL_527,
-		self::PROTOCOL_503,
-		self::PROTOCOL_486
+//		self::PROTOCOL_582,
+//		self::PROTOCOL_575,
+//		self::PROTOCOL_568,
+//		self::PROTOCOL_567,
+//		self::PROTOCOL_560,
+//		self::PROTOCOL_557,
+//		self::PROTOCOL_554,
+//		self::PROTOCOL_545,
+//		self::PROTOCOL_544,
+//		self::PROTOCOL_534,
+//		self::PROTOCOL_527,
+//		self::PROTOCOL_503,
+//		self::PROTOCOL_486
 	];
 
 	public const LOGIN_PACKET = 0x01;
