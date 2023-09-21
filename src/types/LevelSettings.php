@@ -28,7 +28,7 @@ final class LevelSettings{
 	public int $difficulty;
 	public BlockPosition $spawnPosition;
 	public bool $hasAchievementsDisabled = true;
-	public bool $isEditorMode = false;
+	public int $editorWorldType = EditorWorldType::NON_EDITOR;
 	public bool $createdInEditorMode = false;
 	public bool $exportedFromEditorMode = false;
 	public int $time = -1;
@@ -104,7 +104,11 @@ final class LevelSettings{
 		$this->spawnPosition = $in->getBlockPosition();
 		$this->hasAchievementsDisabled = $in->getBool();
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_534){
-			$this->isEditorMode = $in->getBool();
+			if($in->getProtocol() >= ProtocolInfo::PROTOCOL_618){
+				$this->editorWorldType = $in->getVarInt();
+			} else {
+				$this->editorWorldType = $in->getBool() ? EditorWorldType::PROJECT : EditorWorldType::NON_EDITOR;
+			}
 		}
 		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_582){
 			$this->createdInEditorMode = $in->getBool();
@@ -168,7 +172,11 @@ final class LevelSettings{
 		$out->putBlockPosition($this->spawnPosition);
 		$out->putBool($this->hasAchievementsDisabled);
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_534){
-			$out->putBool($this->isEditorMode);
+			if($out->getProtocol() >= ProtocolInfo::PROTOCOL_618) {
+				$out->putVarInt($this->editorWorldType);
+			}else{
+				$out->putBool($this->editorWorldType != EditorWorldType::NON_EDITOR);
+			}
 		}
 		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_582){
 			$out->putBool($this->createdInEditorMode);
