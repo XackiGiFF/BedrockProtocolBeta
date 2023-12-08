@@ -35,12 +35,16 @@ class ShowStoreOfferPacket extends DataPacket implements ClientboundPacket{
 
 	protected function decodePayload(PacketSerializer $in) : void{
 		$this->offerId = $in->getString();
-		$this->redirectType = ShowStoreOfferRedirectType::fromPacket($in->getByte());
+		if($in->getProtocol() >= ProtocolInfo::PROTOCOL_630){
+			$this->redirectType = ShowStoreOfferRedirectType::fromPacket($in->getByte());
+		}
 	}
 
 	protected function encodePayload(PacketSerializer $out) : void{
 		$out->putString($this->offerId);
-		$out->putByte($this->redirectType->value);
+		if($out->getProtocol() >= ProtocolInfo::PROTOCOL_630){
+			$out->putByte($this->redirectType->value);
+		}
 	}
 
 	public function handle(PacketHandlerInterface $handler) : bool{
