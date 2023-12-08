@@ -213,4 +213,7 @@ final class EntityMetadataFlags{
 	public const HAPPY = 112;
 	public const SEARCHING = 113;
 	public const CRAWLING = 114;
+	public const TIMER_FLAG_1 = 115;
+	public const TIMER_FLAG_2 = 116;
+	public const TIMER_FLAG_3 = 117;
 }

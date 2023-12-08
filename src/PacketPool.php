@@ -83,7 +83,6 @@ class PacketPool{
 		$this->registerPacket(new InventorySlotPacket());
 		$this->registerPacket(new ContainerSetDataPacket());
 		$this->registerPacket(new CraftingDataPacket());
-		$this->registerPacket(new CraftingEventPacket());
 		$this->registerPacket(new GuiDataPickItemPacket());
 		$this->registerPacket(new AdventureSettingsPacket());
 		$this->registerPacket(new BlockActorDataPacket());
@@ -230,6 +229,8 @@ class PacketPool{
 		$this->registerPacket(new OpenSignPacket());
 		$this->registerPacket(new AgentAnimationPacket());
 		$this->registerPacket(new RefreshEntitlementsPacket());
+		$this->registerPacket(new PlayerToggleCrafterSlotRequestPacket());
+		$this->registerPacket(new SetPlayerInventoryOptionsPacket());
 	}
 
 	public function registerPacket(Packet $packet) : void{
