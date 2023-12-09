@@ -414,5 +414,5 @@ interface PacketHandlerInterface{
 
 	public function handleSetPlayerInventoryOptions(SetPlayerInventoryOptionsPacket $packet) : bool;
 
-    public function handleCraftingEvent(CraftingEventPacket $packet);
+    public function handleCraftingEvent(CraftingEventPacket $packet) : bool;
 }
