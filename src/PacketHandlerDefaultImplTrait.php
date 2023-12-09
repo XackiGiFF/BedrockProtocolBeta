@@ -813,4 +813,8 @@ trait PacketHandlerDefaultImplTrait{
 	public function handleSetPlayerInventoryOptions(SetPlayerInventoryOptionsPacket $packet) : bool{
 		return false;
 	}
+
+	public function handleCraftingEvent(CraftingEventPacket $packet) : bool{
+		return false;
+	}
 }
