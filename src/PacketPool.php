@@ -83,6 +83,7 @@ class PacketPool{
 		$this->registerPacket(new InventorySlotPacket());
 		$this->registerPacket(new ContainerSetDataPacket());
 		$this->registerPacket(new CraftingDataPacket());
+		$this->registerPacket(new CraftingEventPacket());
 		$this->registerPacket(new GuiDataPickItemPacket());
 		$this->registerPacket(new AdventureSettingsPacket());
 		$this->registerPacket(new BlockActorDataPacket());

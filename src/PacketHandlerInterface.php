@@ -413,4 +413,6 @@ interface PacketHandlerInterface{
 	public function handlePlayerToggleCrafterSlotRequest(PlayerToggleCrafterSlotRequestPacket $packet) : bool;
 
 	public function handleSetPlayerInventoryOptions(SetPlayerInventoryOptionsPacket $packet) : bool;
+
+    public function handleCraftingEvent(CraftingEventPacket $packet);
 }
